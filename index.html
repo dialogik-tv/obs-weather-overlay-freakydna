@@ -8,27 +8,33 @@
     </head>
     <body>
         <div id="label">
+            <!-- Location -->
+            <div id="location-value"></div>
+
             <!-- Overall weather -->
-            <img id="overall-icon" src="img/sun.png" alt="Overall weather condition" />
-            <span class="label-holder">
-                <span class="label-value" id="temperature-value"></span><small class="label-unit">°C</small>
-            </span>
+            <div class="label-box">
+                <img id="weather-icon" src="img/sun.png" alt="Overall weather condition" />
+                <span class="label-holder">
+                    <span class="label-value" id="temperature-value"></span><small class="label-unit">°C</small>
+                </span>
+            </div>
             
             <!-- Wind -->
-            <img id="wind-icon" src="img/compass.png" alt="Wind direction" />
-            <span class="label-holder">
-                <span class="label-value" id="wind-value"></span><small class="label-unit">km/h</small>
-            </span>
+            <div class="label-box">
+                <img id="wind-icon" src="img/compass.png" alt="Wind direction" />
+                <span class="label-holder">
+                    <span class="label-value" id="wind-value"></span><small class="label-unit">km/h</small>
+                </span>
+            </div>
             
             <!-- Humidity -->
-            <img id="humidity-icon" src="img/humidity.png" alt="Humidity" />
-            <span class="label-holder">
-                <span class="label-value" id="humidity-value"></span><small class="label-unit">%</small>
-            </span>
+            <div class="label-box">
+                <img id="humidity-icon" src="img/humidity.png" alt="Humidity" />
+                <span class="label-holder">
+                    <span class="label-value" id="humidity-value"></span><small class="label-unit">%</small>
+                </span>
+            </div>
         </div>
-
-        <a id="twitch-connector">Mit Twitch verbinden</a>
-        <script>document.querySelector('#twitch-connector').href = `https://id.twitch.tv/oauth2/authorize?client_id=8yzf75144kq7dzw9bzzejbabenc9ua&redirect_uri=${window.location.protocol}//${window.location.hostname}/obs-weather-overlay-freakydna/&response_type=token`</script>
 
         <script src="//unpkg.com/twitch-js@2.0.0-beta.33/dist/twitch.js"></script>
         <script src="js/script.js"></script>
