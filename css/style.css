@@ -40,6 +40,10 @@ a:hover {
     background: red !important;
 }
 
+#label:not(.error) #error-box {
+    display: none;
+}
+
 #label.error #temperature-value {
     white-space: nowrap;
 }

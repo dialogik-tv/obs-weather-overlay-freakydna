@@ -1,5 +1,5 @@
 (function() {
-    const channel = 'Freakydna';
+    const channel = 'dialogikTV';
     const weatherIcons = {
         'Few clouds': 'broken-clouds.png',
         'Broken clouds': 'broken-clouds.png',
