@@ -28,12 +28,25 @@ a:hover {
     width: auto;
     padding: 28px 40px 20px 30px;
     color: #000;
-    margin-left: -800px;
+    margin-left: -1000px;
     transition: margin-left 420ms ease-in-out;
 }
 
 #label.visible {
     margin-left: 0;
+}
+
+#label.error {
+    background: red !important;
+}
+
+#label.error #temperature-value {
+    white-space: nowrap;
+}
+
+#label.error > .label-box,
+#label.error > #location-value {
+    display: none;
 }
 
 #label > .label-box {
@@ -44,7 +57,8 @@ a:hover {
     max-height: 100px;
 }
 
-#label > .label-box > .label-holder {
+#label > .label-box > .label-holder,
+#label > #error-box {
     font-size: 6em;
 }
 
@@ -78,6 +92,10 @@ a:hover {
 
 #humidity-value {
     margin-left: -13px;
+}
+
+#error-details {
+    font-size: .5em;
 }
 
 /* CSS gradient background */
