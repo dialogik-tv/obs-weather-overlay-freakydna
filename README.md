@@ -1,6 +1,6 @@
-# OBS Weather Overlay for [Freakydna](https://www.twitch.tv/Freakydna)
+# OBS Weather Overlay
 
-This is an OBS overlay that shows current weather information or any other city in the world, triggered by the Twitch Chat commands `!weather <city>` or `!wetter <city>` (German for *weather*). The city parameter is optional. If no city is given, the weather information for Phnom Penh (Cambodia) is shown. This default is chosen because [Freadydna](https://www.twitch.tv/freakydna) requested 
+This is an OBS overlay that shows current weather information or any other city in the world, triggered by the Twitch Chat commands `!weather <city>` or `!wetter <city>` (German for *weather*). The city parameter is optional. If no city is given, the weather information for Phnom Penh (Cambodia) is shown. This default city was chosen because our viewer [Freadydna](https://www.twitch.tv/Freadydna) requested this overlay development using his collected Twitch channel points.
 
 ## Setting up the overlay for your Twitch channel
 
@@ -10,10 +10,17 @@ Pass a `channel` to the overlay URL, e.g.
 
 ## Customization
 
-You can customize the look of your overlay.
+You can customize the look of your overlay by passing more parameters to the overlay URL:
 
-* Using a Google font*
-* Using a different default city*
+    <url_as_above>?channel=<you>&city=<city>&mods=<0/1>&subs=<0/1>&vip=<0/1>&chat=<0/1>&font=<font>&color=<color>
+
+* `city` - Using a different default city, default `Phnom Penh` (see above).
+* `mods` - Allow mods to use the `!weather`/`!wetter` commands. `1` to allow or `0` to disallow, default `1`.
+* `subs` - Allow mods to use the commands, default `1`.
+* `vip` - Allow mods to use the commands, default `1`.
+* `chat` - Allow anyone in the chat to use the commands, default `0`.
+* `font` - Using a Google font.*
+* `color` - Use a different color scheme.*
 
 (* planned)
 
