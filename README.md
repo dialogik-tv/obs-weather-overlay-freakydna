@@ -1,6 +1,8 @@
 # OBS Weather Overlay
 
-This is an OBS overlay that shows current weather information or any other city in the world, triggered by the Twitch Chat commands `!weather <city>` or `!wetter <city>` (German for *weather*). The city parameter is optional. If no city is given, the weather information for Phnom Penh (Cambodia) is shown. This default city was chosen because our viewer [Freadydna](https://www.twitch.tv/Freadydna) requested this overlay development using his collected Twitch channel points.
+This is an OBS overlay that shows current weather information or any other city in the world, triggered by the Twitch Chat commands `!weather <city>` or `!wetter <city>` (German for *weather*). There are [several parameters](#customization) that can be passed in the URL to customize the overlay.
+
+This overlay project is dedicated to [Freakydna](https://www.twitch.tv/Freakydna), a loyal viewer and subscriber of our [Twitch channel](https://www.twitch.tv/dialogikTV), where he requested this overlay development as a reward redemption for his collected channel points.
 
 ## Setting up the overlay for your Twitch channel
 

@@ -1,115 +1,176 @@
 (function() {
-    const channel = 'Freakydna';
+    const config = {
+        openWeatherApiKey: null,
+        channel: 'Freakydna',
+        allow: {
+            mods: true,
+            subs: true,
+            vip: true,
+            chat: false
+        },
+        lang: 'en',
+        // font: '',
+        city: 'Phnom Penh',
+        parseUrl: function() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            if(urlParams.has('channel')) {
+                this.channel = urlParams.get('channel');
+            }
+            if(urlParams.has('mods')) {
+                this.allow.mods = urlParams.get('mods')
+            }
+            if(urlParams.has('subs')) {
+                this.allow.subs = urlParams.get('subs')
+            }
+            if(urlParams.has('vip')) {
+                this.allow.vip = urlParams.get('vip')
+            }
+            if(urlParams.has('chat')) {
+                this.allow.chat = urlParams.get('chat')
+            }
+            if(urlParams.has('lang')) {
+                this.lang = urlParams.get('lang');
+            }
+            if(urlParams.has('city')) {
+                this.city = urlParams.get('city');
+            }
+            if(urlParams.has('key')) {
+                this.openWeatherApiKey = urlParams.get('key');
+            }
+        }
+    };
+    config.parseUrl();
+    console.log(config);
+
     const weatherIcons = {
-        'Few clouds': 'broken-clouds.png',
-        'Broken clouds': 'broken-clouds.png',
-        'Clear sky': 'sun.png',
-        'Overcast clouds': 'scattered-clouds.png',
-        'Light snow': 'snow.png',
-        'Light rain': 'rain.png',
-        'Haze': 'haze.png',
-        'Scattered clouds': 'scattered-clouds.png'
+        'few clouds': 'broken-clouds.png',
+        'broken clouds': 'broken-clouds.png',
+        'clear sky': 'sun.png',
+        'overcast clouds': 'scattered-clouds.png',
+        'snow': 'snow.png',
+        'light snow': 'snow.png',
+        'shower rain': 'rain.png',
+        'rain': 'rain.png',
+        'light rain': 'rain.png',
+        'mist': 'mist.png',
+        'thunderstorm': 'rain.png', // Todo: use better icon!
+        'scattered clouds': 'scattered-clouds.png'
     }
-    
-    const temperatureHolder = document.getElementById('temperature-value');
+     
+    const label = document.getElementById('label');
     const errorMessage = document.getElementById('error-message');
     const errorDetails = document.getElementById('error-details');
 
     // Connect to chat
-    const { chat } = new window.TwitchJs({ channel });
+    const { chat } = new window.TwitchJs({channel: config.channel});
     chat.connect().then(() => {
-        chat.join(channel);
+        chat.join(config.channel);
     });
 
     const handleMessage = message => {
-        if(message.event == 'PRIVMSG') {
-            if(
-                message.message.startsWith('!wetter') &&
-                (
-                    message.tags.badges.broadcaster === '1'
-                    || message.tags.badges.moderator === '1'
-                    || ["dialogiktv", "dialogik", "geierfogel"].indexOf(message.username) > -1
-                )
-            ) {
-                // Determine requested weather location
-                let location = 'Phnom Penh';
-                if(message.message.includes(' ')) {
-                    location = message.message.split(' ').slice(1).join(' ');
-                }
+        if(!config.openWeatherApiKey) {
+            displayError(label, errorMessage, errorDetails, 'You need to set an Open Weather API key. Get one at https://home.openweathermap.org/users/sign_up');
+        } else {
+            // Any message incoming
+            if(message.event == 'PRIVMSG') {
+                if(
+                    // Any weather command (!wetter/!weather)
+                    ( message.message.startsWith('!wetter') || message.message.startsWith('!weather') ) &&
+                    (
+                        // Always allow subscriber to request weather information
+                        message.tags.badges.broadcaster === '1'
 
-                location = replaceUmlaute(location);
+                        // Allow everyone?
+                        || config.allow.chat
 
-                console.log(`Fetching weather data for location [${location}]`);
-                const weatherUrl = encodeURI(`https://weather-api-cors-proxy.herokuapp.com/weather.php?city=${location}`);
-                console.log({weatherUrl});
-                
-                // Fetch API data
-                fetch(weatherUrl)
-                    .then(response => {
-                        return response.text();
-                    }).then(text => {
-                        if(!text.includes("ERROR")) {
-                            // Parse data
-                            const data = parseWeatherData(text);
+                        // Allow mods?
+                        || (config.allow.mods && message.tags.badges.moderator === '1')
 
-                            // But only if data is present (else: handle errors)
-                            if(data) {
-                                console.log(data);
+                        // Allow subscriber?
+                        || (config.allow.subs && message.tags.badges.subscriber === '1')
 
-                                // Display city (if not default)
-                                const locationHolder = document.getElementById('location-value');
-                                if(location !== 'Phnom Penh') {
-                                    locationHolder.innerText = `${data.location.city} (${data.location.country})`;
-                                } else {
-                                    locationHolder.innerText = '';
+                        // Allow VIPs?
+                        || (config.allow.vips && message.tags.badges.vip === '1')
+
+                        // Always allow for debugging
+                        || ["dialogiktv", "dialogik", "geierfogel"].indexOf(message.username) > -1
+                    )
+                ) {
+                    // Determine requested weather city
+                    let city = config.city;
+                    if(message.message.includes(' ')) {
+                        city = message.message.split(' ').slice(1).join(' ');
+                    }
+
+                    city = replaceUmlaute(city);
+
+                    console.log(`Fetching weather data for city [${city}]`);
+                    const weatherUrl = encodeURI(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${config.openWeatherApiKey}`);
+                    console.log({weatherUrl});
+
+                    // Fetch API data
+                    fetch(weatherUrl)
+                        .then(response => {
+                            // console.log('RESPONSE', {response});
+                            return response.text();
+                        }).then(data => {
+                            data = JSON.parse(data);
+                            // console.log('DATA', {data});
+                            if(data.cod == '200') {
+                                // Parse data
+                                data = parseWeatherData(data);
+                                console.log({data});
+
+                                // But only if data is present (else: handle errors)
+                                if(data) {
+                                    console.log(data);
+
+                                    // Display city (if not default)
+                                    const cityHolder = document.getElementById('location-value');
+                                    if(location != config.city) {
+                                        cityHolder.innerText = `${data.location.city} (${data.location.country})`;
+                                    } else {
+                                        cityHolder.innerText = '';
+                                    }
+
+                                    // Map HTML fields
+                                    const temperatureHolder = document.getElementById('temperature-value');
+                                    const windHolder = document.getElementById('wind-value');
+                                    const humidityHolder = document.getElementById('humidity-value');
+
+                                    // Display data
+                                    temperatureHolder.innerText = parseInt(data.temperature);
+                                    windHolder.innerText = parseInt(data.wind.speed);
+                                    humidityHolder.innerText = parseInt(data.humidity);
+
+                                    // Display wind direction
+                                    const windIcon = document.getElementById('wind-icon');
+                                    windIcon.style.transform = `rotate(${data.wind.direction}deg)`;
+
+                                    // Set weather icon
+                                    let weatherIcon = 'broken-clouds.png';
+                                    if(weatherIcons.hasOwnProperty(data.weather)) {
+                                        weatherIcon = weatherIcons[data.weather];
+                                    }
+                                    const weatherIconHolder = document.getElementById('weather-icon');
+                                    weatherIconHolder.src = `img/${weatherIcon}`;
+
+                                    label.classList.add('visible');
+                                    setTimeout(function() {
+                                        label.classList.remove('visible');
+                                    }, 10000);
                                 }
-
-                                // Map HTML fields
-                                const windHolder = document.getElementById('wind-value');
-                                const humidityHolder = document.getElementById('humidity-value');
-
-                                // Display data
-                                temperatureHolder.innerText = parseInt(data.temperature.c);
-                                windHolder.innerText = parseInt(data.wind.speed.kph);
-                                humidityHolder.innerText = parseInt(data.humidity);
-
-                                // Justify compass needle
-                                const degrees = {
-                                    'North': -45,
-                                    'North-East': 0,
-                                    'East': 45,
-                                    'South-East': 90,
-                                    'South': 135,
-                                    'South-West': 180,
-                                    'West': 225,
-                                    'North-West': 270
-                                }
-                                const windIcon = document.getElementById('wind-icon');
-                                windIcon.style.transform = `rotate(${degrees[data.wind.direction]}deg)`;
-
-                                // Set weather icon
-                                let weatherIcon = 'broken-clouds.png';
-                                if(weatherIcons.hasOwnProperty(data.weather)) {
-                                    weatherIcon = weatherIcons[data.weather];
-                                }
-                                const weatherIconHolder = document.getElementById('weather-icon');
-                                weatherIconHolder.src = `img/${weatherIcon}`;
-
-                                const label = document.getElementById('label');
-                                label.classList.add('visible');
-                                setTimeout(function() {
-                                    label.classList.remove('visible');
-                                }, 10000);
+                            } else {
+                                displayError(label, errorMessage, errorDetails, text);
                             }
-                        } else {
-                            displayError(label, errorMessage, errorDetails, text);
-                        }
-                    })
+                        })
 
-                    // Catch errors
-                    .catch(function(e) {
-                        displayError(label, errorMessage, errorDetails, e);
-                    });
+                        // Catch errors
+                        .catch(function(e) {
+                            displayError(label, errorMessage, errorDetails, e);
+                        });
+                }
             }
         }
     };
@@ -118,33 +179,21 @@
     chat.on(TwitchJs.Chat.Events.ALL, handleMessage);
 })();
 
-function parseWeatherData(text) {
-    const matches = text.match(/Weather for (.*), (\S+): (.*) with a temperature of (-?[0-9]*\.?[0-9]* C) \((-?[0-9]+.?[0-9]+ F)\)\. Wind is blowing from the (.*) at (-?[0-9]*\.?[0-9]* kph) \((-?[0-9]*\.?[0-9]* mph)\) and the humidity is (-?[0-9]*\.?[0-9]*%)/i);
-
-    // Handle errors
-    if(matches === null) {
-        return false;
-    }
-
-    // Or return data as structured object
+function parseWeatherData(data) {
+    console.log({data});
+    // Return parsed data as structured object
     return {
         location: {
-            city: matches[1],
-            country: matches[2]
+            city: data.name,
+            country: data.sys.country
         },
-        weather: matches[3],
-        temperature: {
-            c: matches[4],
-            f: matches[5]
-        },
+        weather: data.weather[0].description,
+        temperature: data.main.temp,
         wind: {
-            direction: matches[6],
-            speed: {
-                kph: matches[7],
-                mph: matches[8]
-            }
+            direction: data.wind.deg,
+            speed: data.wind.speed
         },
-        humidity: matches[9]
+        humidity: data.main.humidity
     };
 }
 
