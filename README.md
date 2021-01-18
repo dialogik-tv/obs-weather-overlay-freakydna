@@ -6,25 +6,27 @@ This overlay project is dedicated to [Freakydna](https://www.twitch.tv/Freakydna
 
 ## Setting up the overlay for your Twitch channel
 
-Pass a `channel` to the overlay URL, e.g.
+1. Pass your channel name via the `channel` parameter to the overlay URL
+2. [Get an API key from the Open Weather API](https://home.openweathermap.org/users/sign_up) and pass it via the `key` paramter.
 
-    https://dialogik-tv.github.io/twitchchat-weather-obs-overlay?channel=<your_twitch_channel_name>
+    https://dialogik-tv.github.io/twitchchat-weather-obs-overlay?channel=<your_twitch_channel_name>&key=<api_key>
 
 ## Customization
 
 You can customize the look of your overlay by passing more parameters to the overlay URL:
 
-    <url_as_above>?channel=<you>&city=<city>&mods=<0/1>&subs=<0/1>&vip=<0/1>&chat=<0/1>&font=<font>&color=<color>
+    <url_as_above>?channel=<you>&key=<key>&city=<city>&mods=<0/1>&subs=<0/1>&vip=<0/1>&chat=<0/1>
 
 * `city` - Using a different default city, default `Phnom Penh` (see above).
 * `mods` - Allow mods to use the `!weather`/`!wetter` commands. `1` to allow or `0` to disallow, default `1`.
 * `subs` - Allow mods to use the commands, default `1`.
 * `vip` - Allow mods to use the commands, default `1`.
 * `chat` - Allow anyone in the chat to use the commands, default `0`.
-* `font` - Using a Google font.*
-* `color` - Use a different color scheme.*
 
-(* planned)
+### Planned customization features
+
+* `font` - Using a Google font.
+* `color` - Use a different color scheme.
 
 ## Attribution
 
