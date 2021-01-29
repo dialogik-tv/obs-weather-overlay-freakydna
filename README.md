@@ -7,25 +7,27 @@ This overlay project is dedicated to [Freakydna](https://www.twitch.tv/Freakydna
 ## Setting up the overlay for your Twitch channel
 
 1. Pass your channel name via the `channel` parameter to the overlay URL
-2. [Get an API key from the Open Weather API](https://home.openweathermap.org/users/sign_up) and pass it via the `key` paramter.
+2. [Get an API key from the Open Weather API](https://home.openweathermap.org/users/sign_up) and also pass it to the URL via the `key` paramter as in this example.
 
-    https://dialogik-tv.github.io/twitchchat-weather-obs-overlay?channel=<your_twitch_channel_name>&key=<api_key>
+    ```
+    https://dialogik-tv.github.io/twitchchat-weather-obs-overlay?channel=dialogikTV&key=1a2b3c4d5e6f7g8h9i0j
+    ```
 
 ## Customization
 
-You can customize the look of your overlay by passing more parameters to the overlay URL:
+You can customize the look of your overlay by passing more parameters to the overlay URL (*don't use `<` or `>`!*):
 
     <url_as_above>?channel=<you>&key=<key>&city=<city>&mods=<0/1>&subs=<0/1>&vip=<0/1>&chat=<0/1>
 
 * `city` - Using a different default city, default `Phnom Penh` (see above).
-* `mods` - Allow mods to use the `!weather`/`!wetter` commands. `1` to allow or `0` to disallow, default `1`.
-* `subs` - Allow mods to use the commands, default `1`.
-* `vip` - Allow mods to use the commands, default `1`.
-* `chat` - Allow anyone in the chat to use the commands, default `0`.
+* `mods` - Allow channel moderators to use the `!weather`/`!wetter` commands. `1` to allow or `0` to disallow, default `1`.
+* `subs` - Allow channel subscribers to use the commands, default `1`.
+* `vip` - Allow VIPs to use the commands, default `1`.
+* `chat` - Allow anyone in the chat to use the commands, default `0`. Note that if you set this to `1`, settings for mod, sub and vip are overwritten.
 
 ### Planned customization features
 
-* `font` - Using a Google font.
+* `font` - Using a custom Google font.
 * `color` - Use a different color scheme.
 
 ## Attribution
